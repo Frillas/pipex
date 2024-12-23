@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/22 18:07:29 by aroullea         ###   ########.fr       */
+/*   Updated: 2024/12/23 15:45:50 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@ void    parsing(int argc, char **argv);
 t_bool  is_empty(int argc, char **argv);
 size_t  ft_strlen(const char *s);
 void    ptr_free(char **args);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
+size_t	ft_strlcat(char *dst, const char *src, size_t size);
+//utils2
+size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 //ft_split
 char    **ft_split(char const *s, char c);
 //commands
-void    commands(char **argv);
+void    commands(char **argv, char **envp);
 
 #endif

@@ -1,15 +1,15 @@
 NAME = pipex
 
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -g -w -Wall -Wextra -Werror
 RM = rm -f
 
 OBJ_DIR = ./obj
 
 SRC_SPECIFIC = sources/main.c \
 
-COMMOM_SRC = sources/parsing.c sources/utils.c sources/ft_split.c \
-			 sources/commands.c 
+COMMOM_SRC = sources/parsing.c sources/utils.c sources/utils2.c \
+			 sources/ft_split.c sources/commands.c 
 
 SRC = $(SRC_SPECIFIC) $(COMMOM_SRC)
 

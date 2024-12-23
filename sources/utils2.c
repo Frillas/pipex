@@ -1,19 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/22 10:14:41 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/23 14:15:00 by aroullea         ###   ########.fr       */
+/*   Created: 2024/12/23 15:43:46 by aroullea          #+#    #+#             */
+/*   Updated: 2024/12/23 15:44:54 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-int	main(int argc, char **argv, char **envp)
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 {
-	parsing(argc, argv);
-	commands(argv, envp);
+	size_t  i;
+
+	i = 0;
+	if (size != 0)
+	{
+		while ((i < size - 1) && (src[i] != '\0'))
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+		return (ft_strlen(src));
+	}
+	return (ft_strlen(src));
 }
