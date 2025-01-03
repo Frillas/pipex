@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/23 15:43:46 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/03 18:12:25 by aroullea         ###   ########.fr       */
+/*   Created: 2025/01/03 18:11:38 by aroullea          #+#    #+#             */
+/*   Updated: 2025/01/03 18:16:06 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+void	execve_fail(char **commands, char **unix_path, char *is_path)
 {
-	size_t	i;
-
-	i = 0;
-	if (size != 0)
+	if (is_path == NULL)
 	{
-		while ((i < size - 1) && (src[i] != '\0'))
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
-		return (ft_strlen(src));
+		write(2, commands[0], ft_strlen(commands[0]));
+		write(2, ": ", 2);
+		write(2, "command not found", 18);
 	}
-	return (ft_strlen(src));
+	write(2, "\n", 2);
+	ptr_free(commands);
+	ptr_free(unix_path);
+}
+
+void	handle_error(char *message)
+{
+	write(2, message, ft_strlen(message) + 1);
+	exit(EXIT_FAILURE);
 }

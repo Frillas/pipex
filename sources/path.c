@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:44:50 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/03 11:50:21 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/03 22:35:17 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-char	**get_unix_path(char **envp)
+char	**get_unix_path(char **envp, char **commands)
 {
 	char	**mypath;
 	char	*env_path;
@@ -24,7 +24,10 @@ char	**get_unix_path(char **envp)
 			env_path = *envp + 5;
 			mypath = ft_split(env_path, ':');
 			if (mypath == NULL)
+			{
+				ptr_free(commands);
 				exit (EXIT_FAILURE);
+			}
 			break ;
 		}
 		envp++;
@@ -32,16 +35,13 @@ char	**get_unix_path(char **envp)
 	return (mypath);
 }
 
-char	**get_commands(char *src, char **unix_path)
+char	**get_commands(char *src)
 {
 	char	**args;
 
 	args = ft_split(src, ' ');
 	if (args == NULL)
-	{
-		ptr_free(unix_path);
 		exit (EXIT_FAILURE);
-	}
 	return (args);
 }
 
