@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 15:43:46 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/23 15:44:54 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:36:07 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 {
-	size_t  i;
+	size_t	i;
 
 	i = 0;
 	if (size != 0)
@@ -28,4 +28,10 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 		return (ft_strlen(src));
 	}
 	return (ft_strlen(src));
+}
+
+void	handle_error(char *message)
+{
+	write(2, message, ft_strlen(message) + 1);
+	exit(EXIT_FAILURE);
 }

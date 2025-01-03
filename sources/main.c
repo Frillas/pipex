@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 10:14:41 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/23 14:15:00 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/03 13:09:55 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,5 @@
 int	main(int argc, char **argv, char **envp)
 {
 	parsing(argc, argv);
-	commands(argv, envp);
+	run_process(argv, envp);
 }

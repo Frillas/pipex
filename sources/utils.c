@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 10:16:19 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/23 15:43:33 by aroullea         ###   ########.fr       */
+/*   Updated: 2024/12/28 22:04:05 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	ptr_free(char **args)
 
 	i = 0;
 	while (args[i])
-	{	
+	{
 		free(args[i]);
 		i++;
 	}

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   type.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/06 11:08:21 by aroullea         ###   ########.fr       */
+/*   Created: 2024/12/29 12:31:46 by aroullea          #+#    #+#             */
+/*   Updated: 2024/12/29 12:32:54 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_TYPE_H
-# define FT_TYPE_H
+#ifndef TYPE_H
+# define TYPE_H
 
 # define TRUE 1
 # define FALSE 0
