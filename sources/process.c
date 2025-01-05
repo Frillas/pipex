@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/05 11:19:25 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/05 22:30:29 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,12 @@ void	execute_parent(char **commands, char **envp)
 				free(path);
 				handle_error(strerror(errno), errno);
 			}
-			break ;
 		}
 		free(path);
 		i++;
 	}
 	execve_fail(commands, unix_path, unix_path[i]);
-	exit (ENOENT);
+	exit (EKEYEXPIRED);
 }
 
 void	handle_parent(char **argv, char **envp, int *fd)

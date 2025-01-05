@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:44:50 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/04 19:41:34 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/05 22:25:34 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	**get_commands(char *src)
 {
 	char	**args;
 
-	args = ft_split(src, ' ');
+	args = arg_split(src);
 	if (args == NULL)
 		exit (EXIT_FAILURE);
 	return (args);

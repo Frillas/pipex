@@ -10,7 +10,7 @@ SRC_SPECIFIC = sources/main.c \
 
 COMMOM_SRC = sources/parsing.c sources/utils.c sources/ft_split.c \
 			 sources/process.c sources/path.c sources/error.c \
-			 sources/children.c
+			 sources/children.c sources/arg_split.c
 
 SRC = $(SRC_SPECIFIC) $(COMMOM_SRC)
 
