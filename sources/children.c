@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process.c                                          :+:      :+:    :+:   */
+/*   children.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/05 11:19:25 by aroullea         ###   ########.fr       */
+/*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
+/*   Updated: 2025/01/05 12:04:04 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-void	execute_parent(char **commands, char **envp)
+void	execute_child(char **commands, char **envp)
 {
 	char	**unix_path;
 	char	*path;
@@ -39,42 +39,54 @@ void	execute_parent(char **commands, char **envp)
 	exit (ENOENT);
 }
 
-void	handle_parent(char **argv, char **envp, int *fd)
+void	setup_fd_child(char *file, int *fd)
 {
-	int		file_fd;
-	char	**commands;
+	int	file_fd;
 
-	file_fd = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0664);
-	if (file_fd == -1)
-		handle_error(strerror(errno), errno);
-	close(fd[1]);
-	if (dup2(file_fd, STDOUT_FILENO) == -1)
-		handle_error(strerror(errno), errno);
-	close(file_fd);
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		handle_error(strerror(errno), errno);
-	close(fd[0]);
-	commands = get_commands(argv[3]);
+	if (access(file, F_OK | R_OK) == 0)
+	{
+		file_fd = open(file, O_RDONLY);
+		if (file_fd == -1)
+			handle_error(strerror(errno), errno);
+		if (dup2(file_fd, STDIN_FILENO) == -1)
+			handle_error(strerror(errno), errno);
+		close(file_fd);
+	}
+	else
+	{
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+			handle_error(strerror(errno), errno);
+		write(STDOUT_FILENO, "", 0);
+		close(fd[1]);
+		exit (EXIT_SUCCESS);
+	}
+}
+
+void	execute_command_child(char **commands, char **envp, char **argv)
+{
+	if (access(argv[2], X_OK) == 0)
+	{
+		if (execve(argv[2], commands, envp) == -1)
+			handle_error(strerror(errno), errno);
+	}
 	if (access(commands[0], X_OK) == 0)
 	{
 		if (execve(commands[0], commands, envp) == -1)
 			handle_error(strerror(errno), errno);
 	}
-	execute_parent(commands, envp);
+	execute_child(commands, envp);
 }
 
-void	run_process(char **argv, char **envp)
+void	handle_child(char **argv, char **envp, int *fd)
 {
-	int		fd[2];
-	pid_t	pid;
+	int		file_fd;
+	char	**commands;
 
-	if (pipe(fd) == -1)
+	close(fd[0]);
+	setup_fd_child(argv[1], fd);
+	if (dup2(fd[1], STDOUT_FILENO) == -1)
 		handle_error(strerror(errno), errno);
-	pid = fork();
-	if (pid < 0)
-		handle_error(strerror(errno), errno);
-	if (pid == 0)
-		handle_child(argv, envp, fd);
-	else
-		handle_parent(argv, envp, fd);
+	close(fd[1]);
+	commands = get_commands(argv[2]);
+	execute_command_child(commands, envp, argv);
 }

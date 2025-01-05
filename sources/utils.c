@@ -6,39 +6,11 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 10:16:19 by aroullea          #+#    #+#             */
-/*   Updated: 2024/12/28 22:04:05 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/04 20:03:57 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-
-t_bool	is_empty(int argc, char **argv)
-{
-	int		i;
-	t_bool	only_space;
-	char	*arg;
-
-	i = 1;
-	only_space = TRUE;
-	while (i < argc)
-	{
-		arg = argv[i];
-		while (*arg && only_space)
-		{
-			if (*arg != ' ')
-				only_space = FALSE;
-			arg++;
-		}
-		if (only_space == TRUE)
-		{
-			write(2, "Error : empty argument\n", 23);
-			return (TRUE);
-		}
-		i++;
-		only_space = TRUE;
-	}
-	return (FALSE);
-}
 
 size_t	ft_strlen(const char *s)
 {
@@ -103,4 +75,22 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 		return (len_dst + len_src);
 	}
 	return (len_src + size);
+}
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	if (size != 0)
+	{
+		while ((i < size - 1) && (src[i] != '\0'))
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+		return (ft_strlen(src));
+	}
+	return (ft_strlen(src));
 }

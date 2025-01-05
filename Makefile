@@ -8,9 +8,9 @@ OBJ_DIR = ./obj
 
 SRC_SPECIFIC = sources/main.c \
 
-COMMOM_SRC = sources/parsing.c sources/utils.c sources/utils2.c \
-			 sources/ft_split.c sources/process.c sources/path.c \
-			 sources/error.c \
+COMMOM_SRC = sources/parsing.c sources/utils.c sources/ft_split.c \
+			 sources/process.c sources/path.c sources/error.c \
+			 sources/children.c
 
 SRC = $(SRC_SPECIFIC) $(COMMOM_SRC)
 
