@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/07 11:40:46 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/07 18:31:55 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ void	setup_fd_child(char *file, int *fd)
 		if (dup2(file_fd, STDIN_FILENO) == -1)
 			handle_error(strerror(errno), errno, &file_fd);
 		close(file_fd);
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+			handle_error(strerror(errno), errno, fd);
+		close(fd[1]);
 	}
 	else
 	{
@@ -61,19 +64,23 @@ void	setup_fd_child(char *file, int *fd)
 	}
 }
 
-void	execute_command_child(char **commands, char **envp, char **argv)
+void	execute_command_child(char **cmds, char **envp, char **argv)
 {
-	if (!(access(commands[0], X_OK)) || !(access(argv[2], X_OK)))
+	if (!(access(cmds[0], X_OK)) || !(access(argv[2], X_OK)))
 	{
-		if (execve(commands[0], commands, envp) == -1)
-			handle_error(strerror(errno), errno, NULL);
+		if (cmds[0][0] == '/' || (cmds[0][0] == '.' && cmds[0][1] == '/'))
+		{
+			if (execve(cmds[0], cmds, envp) == -1)
+				handle_error(strerror(errno), errno, NULL);
+		}
+		handle_error("Command not found", 127, NULL);
 	}
 	if (errno != ENOENT)
 	{
-		ptr_free(commands);
+		ptr_free(cmds);
 		handle_error(strerror(errno), errno, NULL);
 	}
-	execute_child(commands, envp);
+	execute_child(cmds, envp);
 }
 
 void	handle_child(char **argv, char **envp, int *fd)
@@ -83,9 +90,6 @@ void	handle_child(char **argv, char **envp, int *fd)
 
 	close(fd[0]);
 	setup_fd_child(argv[1], fd);
-	if (dup2(fd[1], STDOUT_FILENO) == -1)
-		handle_error(strerror(errno), errno, fd);
-	close(fd[1]);
 	commands = get_commands(argv[2]);
 	execute_command_child(commands, envp, argv);
 }
