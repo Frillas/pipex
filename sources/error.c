@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:11:38 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/05 11:00:01 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/07 11:00:02 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,13 @@ void	execve_fail(char **commands, char **unix_path, char *is_path)
 	ptr_free(unix_path);
 }
 
-void	handle_error(char *message, int error_save)
+void	handle_error(char *message, int error_save, int *fd)
 {
+	if (fd != NULL)
+	{
+		close(fd[0]);
+		close(fd[1]);
+	}
 	write(STDERR_FILENO, message, ft_strlen(message) + 1);
 	write(STDERR_FILENO, "\n", 1);
 	exit(error_save);

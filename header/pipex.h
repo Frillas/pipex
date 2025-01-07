@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/05 17:02:46 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/07 11:13:18 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	**get_commands(char *src);
 char	*get_path(char *unix_path, char *commands, char **unix_p, char **cmd);
 //error.c
 void	execve_fail(char **commands, char **unix_path, char *is_path);
-void	handle_error(char *message, int error_save);
+void	handle_error(char *message, int error_save, int *fd);
 t_bool	is_empty(int argc, char **argv);
 //children.c
 void	handle_child(char **argv, char **envp, int *fd);

@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/05 22:30:29 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/07 11:33:51 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	execute_parent(char **commands, char **envp)
 			if (execve(path, commands, envp) == -1)
 			{
 				free(path);
-				handle_error(strerror(errno), errno);
+				handle_error(strerror(errno), errno, NULL);
 			}
 		}
 		free(path);
@@ -45,19 +45,24 @@ void	handle_parent(char **argv, char **envp, int *fd)
 
 	file_fd = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (file_fd == -1)
-		handle_error(strerror(errno), errno);
+		handle_error(strerror(errno), errno, fd);
 	close(fd[1]);
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
-		handle_error(strerror(errno), errno);
+		handle_error(strerror(errno), errno, fd);
 	close(file_fd);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
-		handle_error(strerror(errno), errno);
+		handle_error(strerror(errno), errno, fd);
 	close(fd[0]);
 	commands = get_commands(argv[3]);
 	if (access(commands[0], X_OK) == 0)
 	{
 		if (execve(commands[0], commands, envp) == -1)
-			handle_error(strerror(errno), errno);
+			handle_error(strerror(errno), errno, NULL);
+	}
+	if (errno != ENOENT)
+	{
+		ptr_free(commands);
+		handle_error(strerror(errno), errno, NULL);
 	}
 	execute_parent(commands, envp);
 }
@@ -68,10 +73,10 @@ void	run_process(char **argv, char **envp)
 	pid_t	pid;
 
 	if (pipe(fd) == -1)
-		handle_error(strerror(errno), errno);
+		handle_error(strerror(errno), errno, NULL);
 	pid = fork();
 	if (pid < 0)
-		handle_error(strerror(errno), errno);
+		handle_error(strerror(errno), errno, NULL);
 	if (pid == 0)
 		handle_child(argv, envp, fd);
 	else
