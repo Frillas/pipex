@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/07 18:31:55 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/08 10:09:08 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	execute_command_child(char **cmds, char **envp, char **argv)
 {
 	if (!(access(cmds[0], X_OK)) || !(access(argv[2], X_OK)))
 	{
-		if (cmds[0][0] == '/' || (cmds[0][0] == '.' && cmds[0][1] == '/'))
+		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
 				handle_error(strerror(errno), errno, NULL);

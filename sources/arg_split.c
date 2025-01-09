@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 14:01:04 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/07 10:52:35 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/08 21:07:16 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,17 @@ static void	copyword(char *dest, char const *s, int len, int i)
 	single = FALSE;
 	while (i < len)
 	{
-		if (s[i] == '"' && (s[i - 1] != '\\') && !single)
+		if ((s[i] == '"' && (s[i - 1] != '\\') && !single)
+			|| (s[i] == '\'' && !in_quotes))
 		{
-			in_quotes = !in_quotes;
-			i++;
-		}
-		else if (s[i] == '\'' && !in_quotes)
-		{
-			single = !single;
+			if (s[i] == '"')
+				in_quotes = !in_quotes;
+			else
+				single = !single;
 			i++;
 		}
 		else if (s[i] == '\\' && s[i + 1] == '"')
 			i++;
-		else if ((in_quotes && s[i] == '\'') || (single && s[i] == '"'))
-			dest[j++] = s[i++];
 		else
 			dest[j++] = s[i++];
 	}
