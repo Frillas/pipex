@@ -1,16 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process.c                                          :+:      :+:    :+:   */
+/*   last_child_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/10 18:16:51 by aroullea         ###   ########.fr       */
+/*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
+/*   Updated: 2025/01/11 11:56:16 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../header/pipex.h"
+#include "../../header/bonus/pipex_bonus.h"
+
+void	close_last_fds(int **fd, int nb_fd)
+{
+	int	i;
+
+	i = 0;
+	while (i < nb_fd)
+	{
+		if (i == (nb_fd - 1))
+		{
+			close(fd[i][1]);
+		}
+		else
+		{
+			close(fd[i][0]);
+			close(fd[i][1]);
+		}
+		i++;
+	}
+}
 
 void	execute_parent(char **commands, char **envp, int fd)
 {
@@ -36,7 +56,7 @@ void	execute_parent(char **commands, char **envp, int fd)
 	}
 	execve_fail(commands, unix_path, unix_path[i]);
 	close(fd);
-	exit (EKEYEXPIRED);
+	exit (127);
 }
 
 int	setup_fd_parent(char *file, int *fd)
@@ -46,7 +66,6 @@ int	setup_fd_parent(char *file, int *fd)
 	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (file_fd == -1)
 		handle_error(strerror(errno), 2, fd);
-	close(fd[1]);
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
 	close(file_fd);
@@ -56,12 +75,13 @@ int	setup_fd_parent(char *file, int *fd)
 	return (file_fd);
 }
 
-void	handle_parent(char **argv, char **envp, int *fd)
+void	last_child(char **argv, char **envp, int **fd, int nb_fd)
 {
 	char	**cmds;
 	int		file_fd;
 
-	file_fd = setup_fd_parent(argv[4], fd);
+	close_last_fds(fd,nb_fd);
+	file_fd = setup_fd_parent(argv[4], fd[nb_fd - 1]);
 	cmds = get_commands(argv[3]);
 	if (access(cmds[0], X_OK) == 0)
 	{
@@ -79,33 +99,4 @@ void	handle_parent(char **argv, char **envp, int *fd)
 		handle_error(strerror(errno), 126, &file_fd);
 	}
 	execute_parent(cmds, envp, file_fd);
-}
-
-void	run_process(char **argv, char **envp)
-{
-	int		fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
-	int		status;
-	int		exit_code;
-
-	if (pipe(fd) == -1)
-		handle_error(strerror(errno), errno, NULL);
-	pid1 = fork();
-	if (pid1 < 0)
-		handle_error(strerror(errno), errno, NULL);
-	if (pid1 == 0)
-		handle_child(argv, envp, fd);
-	pid2 = fork();
-	if (pid2 < 0)
-		handle_error(strerror(errno), errno, NULL);
-	if (pid2 == 0)
-		handle_parent(argv, envp, fd);
-	close(fd[0]);
-	close(fd[1]);
-	if ((waitpid(pid1, NULL, 0) != pid1))
-		handle_error(strerror(errno), errno, NULL);
-	if ((waitpid(pid2, &status, 0) != pid2))
-		handle_error(strerror(errno), errno, NULL);
-	exit(exit_code = (status >> 8) & 0xFF);
 }
