@@ -6,49 +6,39 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 12:30:00 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/11 18:48:27 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	run_process(char **argv, char **envp,int nb_pipe, int nb_fd)
+void	create_pipe(int nb_cmd, t_data *pipes)
 {
-	int fd[nb_fd][2];
-	int	pid[nb_pipe];
 	int	i;
-	int	j;
-	int	status;
-	int	exit_code;
 
 	i = 0;
-	j = 0;
-	while (i < nb_pipe)
+	pipes->nb_pipes = nb_cmd;
+	pipes->pid = malloc(sizeof(int) * (nb_cmd + 1));
+	if (!pipes->pid)
+		handle_error(strerror(errno), errno, NULL);
+	pipes->fd = malloc(sizeof(int *) * pipes->nb_pipes)
+	if (!pipes->fd)
+		handle_error(strerror(errno), errno, NULL);
+	while (i < pipes->nb_pipes)
 	{
-		if (pipe(fd[i]) == -1)
+		pipes->fd[i] = malloc(sizeof(int) * 2);
+		if (!pipes->fd[i])
+			handle_error(strerror(errno), errno, NULL);
+		if (pipe(pipes->fd[i]) == -1)
 			handle_error(strerror(errno), errno, NULL);
 		i++;
 	}
-	i = 0;
-	while (i < nb_pipe)
-	{
-		pid[i] = fork();
-		if (pid[i] < 0)
-			handle_error(strerror(errno), errno, NULL);
-		else if (pid[i] == 0)
-		{
-			if (i == 0)
-				first_child(argv, envp, fd, nb_fd);
-			else if (i == nb_fd)
-				last_child(argv, envp, fd, nb_fd);
-			else
-			{
-				close_middle_fds(fd, nb_fd, i);
-				middle_child(argv, envp, fd, i);
-			}
-		}
-		i++;
-	}
+}
+
+void	close_all_fds(int fd[][2], int nb_fd)
+{
+	int	i;
+
 	i = 0;
 	while (i < nb_fd)
 	{
@@ -56,10 +46,45 @@ void	run_process(char **argv, char **envp,int nb_pipe, int nb_fd)
 		close(fd[i][1]);
 		i++;
 	}
-	while (j < nb_fd)
+}
+
+void	run_process(int argc, char **argv, char **envp)
+{
+	t_data	pipes;
+	int		i;
+	int		status;
+
+	i = 0;
+	create_pipe((argc - 4), &pipes);
+	if (pipes == NULL)
+		handle_error(strerror(errno), errno, NULL);
+	while (i < (argc - 3))
 	{
-		waitpid(pid[j], &status, 0);
-		j++;
+		pid[i] = fork();
+		if (pid[i] < 0)
+			handle_error(strerror(errno), errno, NULL);
+		else if (pid[i] == 0)
+		{
+			if (i == 0)
+				first_child(argv, envp, fd, (argc - 4));
+			else if (i == (argc - 4))
+				last_child(argc, argv, envp, fd);
+			else
+			{
+				close_middle_fds(fd, (argc - 4), i);
+				middle_child(argv, envp, fd, i);
+			}
+		}
+		i++;
 	}
-	exit(exit_code = (status >> 8) & 0xFF);
+	i = 0;
+	close_all_fds(fd, (argc - 4));
+	while (i < (argc - 3))
+	{
+		waitpid(pid[i], &status, 0);
+		i++;
+	}
+	if (status)
+		exit((status >> 8) & 0xFF);
+	exit (0);
 }

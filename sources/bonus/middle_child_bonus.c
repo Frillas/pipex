@@ -6,13 +6,13 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 12:00:11 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/11 16:57:57 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	close_middle_fds(int **fd, int nb_fd, int i)
+void	close_middle_fds(int fd[][2], int nb_fd, int i)
 {
 	int	j;
 
@@ -60,7 +60,7 @@ static void	execute_child(char **commands, char **envp)
 	exit (127);
 }
 
-static void	setup_fd_mid(int **fd, int i)
+static void	setup_fd_mid(int fd[][2], int i)
 {
 	if (dup2(fd[i - 1][0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, NULL);
@@ -94,7 +94,7 @@ void	middle_child(char **argv, char **envp, int **fd, int i)
 	int		file_fd;
 	char	**commands;
 
-	setup_fd_child(fd, i);
-	commands = get_commands(argv[i - 3]);
+	setup_fd_mid(fd, i);
+	commands = get_commands(argv[i + 2]);
 	execute_command_child(commands, envp, argv);
 }

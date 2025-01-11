@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 12:00:14 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/11 17:36:16 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	close_child_fds(int **fd, int nb_fd)
+void	close_child_fds(int fd[][2], int nb_fd)
 {
 	int	j;
 
@@ -27,7 +27,7 @@ void	close_child_fds(int **fd, int nb_fd)
 			close(fd[j][1]);
 		}
 		j++;
-	}	
+	}
 }
 
 static void	execute_child(char **commands, char **envp)
@@ -56,7 +56,7 @@ static void	execute_child(char **commands, char **envp)
 	exit (127);
 }
 
-void	setup_fd_child(char *file, int *fd)
+void	setup_fd_child(char *file, int fd[][2])
 {
 	int	file_fd;
 
@@ -68,9 +68,9 @@ void	setup_fd_child(char *file, int *fd)
 		if (dup2(file_fd, STDIN_FILENO) == -1)
 			handle_error(strerror(errno), errno, &file_fd);
 		close(file_fd);
-		if (dup2(fd[1], STDOUT_FILENO) == -1)
+		if (dup2(fd[0][1], STDOUT_FILENO) == -1)
 			handle_error(strerror(errno), errno, fd);
-		close(fd[1]);
+		close(fd[0][1]);
 	}
 	else
 	{
@@ -107,7 +107,7 @@ void	first_child(char **argv, char **envp, int **fd, int nb_fd)
 	char	**commands;
 
 	close_child_fds(fd, nb_fd);
-	setup_fd_child(argv[1], fd[0]);
+	setup_fd_child(argv[1], fd);
 	commands = get_commands(argv[2]);
 	execute_command_child(commands, envp, argv);
 }
