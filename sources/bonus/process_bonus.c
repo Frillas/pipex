@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 07:24:39 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 08:42:08 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,12 @@ void	run_process(int argc, char **argv, char **envp)
 	}
 	i = 0;
 	close_all_fds(data.fd, data.nb_pipes);
-	free(data.pid);
 	while (i < data.nb_pipes)
 	{
 		waitpid(data.pid[i], &status, 0);
 		i++;
 	}
+	free(data.pid);
 	if (status)
 		exit((status >> 8) & 0xFF);
 	exit (0);
