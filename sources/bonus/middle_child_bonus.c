@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 06:44:42 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 10:11:25 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	middle_child(char **argv, char **envp, t_list *data, int i)
 {
 	int		file_fd;
 	char	**commands;
-	
+
 	close_middle_fds(data->fd, data->nb_pipes, i);
 	setup_fd_mid(data->fd, i);
 	commands = get_commands(argv[i + 2]);

@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 05:45:30 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 11:37:01 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	handle_parent(char **argv, char **envp, int *fd)
 
 	file_fd = setup_fd_parent(argv[4], fd);
 	cmds = get_commands(argv[3]);
-	if (access(cmds[0], X_OK) == 0)
+	if (!(access(cmds[0], X_OK)) || !(access(argv[3], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{

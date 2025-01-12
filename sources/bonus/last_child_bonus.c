@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 06:25:36 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 11:50:51 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	setup_fd_parent(char *file, int *fd[2], int nb_pipes)
 	close(file_fd);
 	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
-	close(fd[0]);
+	close(fd[nb_pipes - 1][0]);
 	return (file_fd);
 }
 
@@ -83,7 +83,7 @@ void	last_child(int argc, char **argv, char **envp, t_list *data)
 	close_last_fds(data->fd, data->nb_pipes);
 	file_fd = setup_fd_parent(argv[argc - 1], data->fd, data->nb_pipes);
 	cmds = get_commands(argv[argc - 2]);
-	if (access(cmds[0], X_OK) == 0)
+	if (!(access(cmds[0], X_OK)) || !(access(argv[argc - 2], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{

@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 08:42:08 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 11:28:10 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	create_data(int tot_pipes, int tot_cmds,t_list *data)
+void	create_data(int tot_pipes, int tot_cmds, t_list *data)
 {
 	int	i;
 
@@ -51,11 +51,27 @@ void	close_all_fds(int *fd[2], int nb_pipes)
 	free(fd);
 }
 
+int	wait_pid(int *pid, int nb_pipes)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (i < nb_pipes)
+	{
+		if (waitpid(pid[i], &status, 0) == -1)
+			handle_error(strerror(errno), errno, NULL);
+		i++;
+	}
+	free(pid);
+	return ((status >> 8) & 0xFF);
+}
+
 void	run_process(int argc, char **argv, char **envp)
 {
 	t_list	data;
 	int		i;
-	int		status;
+	int		error_status;
 
 	i = 0;
 	create_data((argc - 4), (argc - 3), &data);
@@ -75,15 +91,7 @@ void	run_process(int argc, char **argv, char **envp)
 		}
 		i++;
 	}
-	i = 0;
 	close_all_fds(data.fd, data.nb_pipes);
-	while (i < data.nb_pipes)
-	{
-		waitpid(data.pid[i], &status, 0);
-		i++;
-	}
-	free(data.pid);
-	if (status)
-		exit((status >> 8) & 0xFF);
-	exit (0);
+	error_status = wait_pid(data.pid, data.nb_cmds);
+	exit(error_status);
 }
