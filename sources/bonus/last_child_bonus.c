@@ -6,20 +6,20 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 17:36:41 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 06:25:36 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	close_last_fds(int fd[][2], int nb_fd)
+void	close_last_fds(int *fd[2], int nb_pipes)
 {
 	int	i;
 
 	i = 0;
-	while (i < nb_fd)
+	while (i < nb_pipes)
 	{
-		if (i == (nb_fd - 1))
+		if (i == (nb_pipes - 1))
 		{
 			close(fd[i][1]);
 		}
@@ -59,7 +59,7 @@ void	execute_parent(char **commands, char **envp, int fd)
 	exit (127);
 }
 
-int	setup_fd_parent(char *file, int fd[][2], int nb_fd)
+int	setup_fd_parent(char *file, int *fd[2], int nb_pipes)
 {
 	int	file_fd;
 
@@ -69,19 +69,19 @@ int	setup_fd_parent(char *file, int fd[][2], int nb_fd)
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
 	close(file_fd);
-	if (dup2(fd[nb_fd - 1][0], STDIN_FILENO) == -1)
+	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
 	close(fd[0]);
 	return (file_fd);
 }
 
-void	last_child(int argc, char **argv, char **envp, int **fd)
+void	last_child(int argc, char **argv, char **envp, t_list *data)
 {
 	char	**cmds;
 	int		file_fd;
 
-	close_last_fds(fd, (argc - 4));
-	file_fd = setup_fd_parent(argv[argc - 1], fd, argc - 4);
+	close_last_fds(data->fd, data->nb_pipes);
+	file_fd = setup_fd_parent(argv[argc - 1], data->fd, data->nb_pipes);
 	cmds = get_commands(argv[argc - 2]);
 	if (access(cmds[0], X_OK) == 0)
 	{

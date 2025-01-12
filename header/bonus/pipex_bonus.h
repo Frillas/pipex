@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 11:00:09 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 17:35:41 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 07:05:06 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,16 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <string.h>
-# include "../type.h"
+# include "type_bonus.h"
 
 //process_bonus
 void	run_process(int argc, char **argv, char **envp);
 //first_child
-void	first_child(char **argv, char **envp, int **fd, int nb_fd);
+void	first_child(char **argv, char **envp, t_list *data);
 //last_child
-void	last_child(int argc, char **argv, char **envp, int **fd);
+void	last_child(int argc, char **argv, char **envp, t_list *data);
 //middle_child
-void	middle_child(char **argv, char **envp, int **fd, int i);
+void	middle_child(char **argv, char **envp, t_list *data, int i);
 //parsing
 void	parsing(int argc, char **argv);
 //utils

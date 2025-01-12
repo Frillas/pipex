@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/10 18:16:51 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 05:45:30 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	execute_parent(char **commands, char **envp, int fd)
 	}
 	execve_fail(commands, unix_path, unix_path[i]);
 	close(fd);
-	exit (EKEYEXPIRED);
+	exit (127);
 }
 
 int	setup_fd_parent(char *file, int *fd)

@@ -1,5 +1,5 @@
 NAME = pipex
-BONUS_NAME = pipex
+BONUS_NAME = multi_pipex
 
 CC = cc
 CFLAGS = -g -w -Wall -Wextra -Werror

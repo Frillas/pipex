@@ -6,82 +6,81 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 18:48:27 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 07:24:39 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	create_pipe(int nb_cmd, t_data *pipes)
+void	create_data(int tot_pipes, int tot_cmds,t_list *data)
 {
 	int	i;
 
 	i = 0;
-	pipes->nb_pipes = nb_cmd;
-	pipes->pid = malloc(sizeof(int) * (nb_cmd + 1));
-	if (!pipes->pid)
+	data->nb_pipes = tot_pipes;
+	data->nb_cmds = tot_cmds;
+	data->pid = malloc(sizeof(int) * data->nb_cmds);
+	if (!data->pid)
 		handle_error(strerror(errno), errno, NULL);
-	pipes->fd = malloc(sizeof(int *) * pipes->nb_pipes)
-	if (!pipes->fd)
+	data->fd = malloc(sizeof(int *) * (data->nb_pipes));
+	if (!data->fd)
 		handle_error(strerror(errno), errno, NULL);
-	while (i < pipes->nb_pipes)
+	while (i < data->nb_pipes)
 	{
-		pipes->fd[i] = malloc(sizeof(int) * 2);
-		if (!pipes->fd[i])
+		data->fd[i] = malloc(sizeof(int) * 2);
+		if (!data->fd[i])
 			handle_error(strerror(errno), errno, NULL);
-		if (pipe(pipes->fd[i]) == -1)
+		if (pipe(data->fd[i]) == -1)
 			handle_error(strerror(errno), errno, NULL);
 		i++;
 	}
 }
 
-void	close_all_fds(int fd[][2], int nb_fd)
+void	close_all_fds(int *fd[2], int nb_pipes)
 {
 	int	i;
 
 	i = 0;
-	while (i < nb_fd)
+	while (i < nb_pipes)
 	{
 		close(fd[i][0]);
 		close(fd[i][1]);
+		free(fd[i]);
 		i++;
 	}
+	free(fd);
 }
 
 void	run_process(int argc, char **argv, char **envp)
 {
-	t_data	pipes;
+	t_list	data;
 	int		i;
 	int		status;
 
 	i = 0;
-	create_pipe((argc - 4), &pipes);
-	if (pipes == NULL)
-		handle_error(strerror(errno), errno, NULL);
-	while (i < (argc - 3))
+	create_data((argc - 4), (argc - 3), &data);
+	while (i < data.nb_cmds)
 	{
-		pid[i] = fork();
-		if (pid[i] < 0)
+		data.pid[i] = fork();
+		if (data.pid[i] < 0)
 			handle_error(strerror(errno), errno, NULL);
-		else if (pid[i] == 0)
+		else if (data.pid[i] == 0)
 		{
 			if (i == 0)
-				first_child(argv, envp, fd, (argc - 4));
-			else if (i == (argc - 4))
-				last_child(argc, argv, envp, fd);
+				first_child(argv, envp, &data);
+			else if (i == data.nb_pipes)
+				last_child(argc, argv, envp, &data);
 			else
-			{
-				close_middle_fds(fd, (argc - 4), i);
-				middle_child(argv, envp, fd, i);
-			}
+				middle_child(argv, envp, &data, i);
 		}
 		i++;
 	}
 	i = 0;
-	close_all_fds(fd, (argc - 4));
-	while (i < (argc - 3))
+	close_all_fds(data.fd, data.nb_pipes);
+	free(data.pid);
+	while (i < data.nb_pipes)
 	{
-		waitpid(pid[i], &status, 0);
+		waitpid(data.pid[i], &status, 0);
 		i++;
 	}
 	if (status)
