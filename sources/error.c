@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:11:38 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/09 10:44:28 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 19:08:38 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,10 @@ void	handle_error(char *message, int error_save, int *fd)
 {
 	if (fd != NULL)
 	{
-		close(fd[0]);
-		close(fd[1]);
+		if (fd[0] > 0)
+			close(fd[0]);
+		if (fd[1] > 0)
+			close(fd[1]);
 	}
 	write(STDERR_FILENO, message, ft_strlen(message) + 1);
 	write(STDERR_FILENO, "\n", 1);

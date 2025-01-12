@@ -6,13 +6,13 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 10:11:25 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:13:21 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	close_middle_fds(int *fd[2], int nb_pipes, int i)
+static void	close_middle_fds(int *fd[2], int nb_pipes, int i)
 {
 	int	j;
 
@@ -91,7 +91,6 @@ static void	execute_command_child(char **cmds, char **envp, char **argv)
 
 void	middle_child(char **argv, char **envp, t_list *data, int i)
 {
-	int		file_fd;
 	char	**commands;
 
 	close_middle_fds(data->fd, data->nb_pipes, i);

@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/08 11:22:29 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 18:32:10 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	**ft_split(char const *s, char c);
 //arg_split
 char	**arg_split(char const *s);
 //process
-void	execute_parent(char **commands, char **envp, int fd);
+void	execute_parent(char **commands, char **envp);
 void	handle_parent(char **argv, char **envp, int *fd);
 void	run_process(char **argv, char **envp);
 //path

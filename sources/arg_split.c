@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 14:01:04 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/08 21:07:16 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:31:37 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-static int	count_args(char *s, int count)
+static int	count_args(char const *s, int count)
 {
 	t_bool	in_word;
 	t_bool	in_quotes;

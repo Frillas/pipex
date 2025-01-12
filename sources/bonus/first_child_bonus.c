@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 07:08:14 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 12:59:16 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ static void	setup_fd_child(char *file, int *fd[2])
 			handle_error(strerror(errno), errno, &file_fd);
 		close(file_fd);
 		if (dup2(fd[0][1], STDOUT_FILENO) == -1)
-			handle_error(strerror(errno), errno, fd);
+			handle_error(strerror(errno), errno, *fd);
 		close(fd[0][1]);
 	}
 	else
 	{
 		if (dup2(fd[0][1], STDOUT_FILENO) == -1)
-			handle_error(strerror(errno), errno, fd);
+			handle_error(strerror(errno), errno, *fd);
 		write(STDOUT_FILENO, "", 0);
 		close(fd[0][1]);
 		exit (EXIT_SUCCESS);
@@ -103,7 +103,6 @@ static void	execute_command_child(char **cmds, char **envp, char **argv)
 
 void	first_child(char **argv, char **envp, t_list *data)
 {
-	int		file_fd;
 	char	**commands;
 
 	close_child_fds(data->fd, data->nb_pipes);

@@ -1,8 +1,7 @@
 NAME = pipex
-BONUS_NAME = pipex
 
 CC = cc
-CFLAGS = -g -w -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 RM = rm -f
 
 OBJ_DIR = ./obj
@@ -22,27 +21,26 @@ BONUS = $(BONUS_SPECIFIC) $(COMMOM_SRC)
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 BONUS_OBJ = $(BONUS:%.c=$(OBJ_DIR)/%.o)
 
+MODE := normal
+
 all: $(NAME)
 
-bonus: $(BONUS_NAME)
+bonus:
+	@$(MAKE) MODE=bonus all
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-
-$(BONUS_NAME): $(BONUS_OBJ)
-	$(CC) $(CFLAGS) $(BONUS_OBJ) -o $(BONUS_NAME)
+$(NAME): $(if $(filter bonus, $(MODE)), $(BONUS_OBJ), $(OBJ))
+	$(CC) $(CFLAGS) $^ -o $(NAME)
 
 clean:
 	$(RM) -r $(OBJ_DIR)
 
 fclean: clean
-	$(RM) $(NAME) $(BONUS_NAME)
+	$(RM) $(NAME)
 
 re: fclean all
 
 .PHONY: all bonus clean fclean re
-

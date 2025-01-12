@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 11:28:10 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:16:28 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,19 @@ void	create_data(int tot_pipes, int tot_cmds, t_list *data)
 	}
 }
 
-void	close_all_fds(int *fd[2], int nb_pipes)
+void	close_all_fds(t_list *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < nb_pipes)
+	while (i < data->nb_pipes)
 	{
-		close(fd[i][0]);
-		close(fd[i][1]);
-		free(fd[i]);
+		close(data->fd[i][0]);
+		close(data->fd[i][1]);
+		free(data->fd[i]);
 		i++;
 	}
-	free(fd);
+	free(data->fd);
 }
 
 int	wait_pid(int *pid, int nb_pipes)
@@ -91,7 +91,7 @@ void	run_process(int argc, char **argv, char **envp)
 		}
 		i++;
 	}
-	close_all_fds(data.fd, data.nb_pipes);
+	close_all_fds(&data);
 	error_status = wait_pid(data.pid, data.nb_cmds);
 	exit(error_status);
 }

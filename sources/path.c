@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:44:50 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/08 11:52:00 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:30:27 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,29 @@ char	*get_path(char *unix_path, char *commands, char **unix_p, char **cmd)
 	return (path);
 }
 
-t_bool	is_file(char **cmds)
+static t_bool	is_dir(char **cmds, size_t len_cmd)
 {
 	char	*path;
+	size_t	i;
+
+	i = 0;
+	path = (char *) malloc(sizeof(char) * (len_cmd + 1));
+	if (path == NULL)
+		return (FALSE);
+	while (i < len_cmd)
+	{
+		path[i] = cmds[0][i];
+		i++;
+	}
+	path[i] = '\0';
+	if (access(path, X_OK) == 0)
+		return (TRUE);
+	free(path);
+	return (FALSE);
+}
+
+t_bool	is_file(char **cmds)
+{
 	size_t	len_cmd;
 
 	if (cmds[0][0] == '/' || (cmds[0][0] == '.' && cmds[0][1] == '/'))
@@ -87,26 +107,5 @@ t_bool	is_file(char **cmds)
 		if (is_dir(cmds, len_cmd) == TRUE)
 			return (TRUE);
 	}
-	return (FALSE);
-}
-
-t_bool	is_dir(char **cmds, size_t len_cmd)
-{
-	char	*path;
-	size_t	i;
-
-	i = 0;
-	path = (char *) malloc(sizeof(char) * (len_cmd + 1));
-	if (path == NULL)
-		return (FALSE);
-	while (i < len_cmd)
-	{
-		path[i] = cmds[0][i];
-		i++;
-	}
-	path[i] = '\0';
-	if (access(path, X_OK) == 0)
-		return (TRUE);
-	free(path);
 	return (FALSE);
 }

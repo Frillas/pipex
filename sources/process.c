@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 11:37:01 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 19:26:44 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-void	execute_parent(char **commands, char **envp, int fd)
+void	execute_parent(char **commands, char **envp)
 {
 	char	**unix_path;
 	char	*path;
@@ -28,18 +28,18 @@ void	execute_parent(char **commands, char **envp, int fd)
 			if (execve(path, commands, envp) == -1)
 			{
 				free(path);
-				handle_error(strerror(errno), errno, fd);
+				ptr_free(commands);
+				handle_error(strerror(errno), errno, NULL);
 			}
 		}
 		free(path);
 		i++;
 	}
 	execve_fail(commands, unix_path, unix_path[i]);
-	close(fd);
 	exit (127);
 }
 
-int	setup_fd_parent(char *file, int *fd)
+void	setup_fd_parent(char *file, int *fd)
 {
 	int	file_fd;
 
@@ -53,32 +53,32 @@ int	setup_fd_parent(char *file, int *fd)
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
 	close(fd[0]);
-	return (file_fd);
 }
 
 void	handle_parent(char **argv, char **envp, int *fd)
 {
 	char	**cmds;
-	int		file_fd;
 
-	file_fd = setup_fd_parent(argv[4], fd);
+	setup_fd_parent(argv[4], fd);
 	cmds = get_commands(argv[3]);
 	if (!(access(cmds[0], X_OK)) || !(access(argv[3], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
-				handle_error(strerror(errno), errno, &file_fd);
+			{	
+				ptr_free(cmds);
+				handle_error(strerror(errno), errno, NULL);
+			}
 		}
-		ptr_free(cmds);
-		handle_error("Command not found", 127, &file_fd);
+		execute_parent(cmds, envp);
 	}
 	if (errno != ENOENT)
 	{
 		ptr_free(cmds);
-		handle_error(strerror(errno), 126, &file_fd);
+		handle_error(strerror(errno), 126, NULL);
 	}
-	execute_parent(cmds, envp, file_fd);
+	execute_parent(cmds, envp);
 }
 
 void	run_process(char **argv, char **envp)

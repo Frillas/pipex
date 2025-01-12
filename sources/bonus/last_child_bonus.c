@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 11:50:51 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:00:53 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	execute_parent(char **commands, char **envp, int fd)
 			if (execve(path, commands, envp) == -1)
 			{
 				free(path);
-				handle_error(strerror(errno), errno, fd);
+				handle_error(strerror(errno), errno, &fd);
 			}
 		}
 		free(path);
@@ -65,12 +65,12 @@ int	setup_fd_parent(char *file, int *fd[2], int nb_pipes)
 
 	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (file_fd == -1)
-		handle_error(strerror(errno), 2, fd);
+		handle_error(strerror(errno), 2, *fd);
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
-		handle_error(strerror(errno), errno, fd);
+		handle_error(strerror(errno), errno, *fd);
 	close(file_fd);
 	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
-		handle_error(strerror(errno), errno, fd);
+		handle_error(strerror(errno), errno, *fd);
 	close(fd[nb_pipes - 1][0]);
 	return (file_fd);
 }

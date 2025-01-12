@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/11 18:08:24 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/12 19:32:41 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	execute_child(char **commands, char **envp)
 			if (execve(path, commands, envp) == -1)
 			{
 				free(path);
+				ptr_free(commands);
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
@@ -71,9 +72,12 @@ void	execute_command_child(char **cmds, char **envp, char **argv)
 		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
+			{
+				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
+			}
 		}
-		handle_error("Command not found", 127, NULL);
+		execute_child(cmds, envp);
 	}
 	if (errno != ENOENT)
 	{
@@ -85,7 +89,6 @@ void	execute_command_child(char **cmds, char **envp, char **argv)
 
 void	handle_child(char **argv, char **envp, int *fd)
 {
-	int		file_fd;
 	char	**commands;
 
 	close(fd[0]);
