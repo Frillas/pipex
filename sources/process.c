@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 19:26:44 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:20:40 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	handle_parent(char **argv, char **envp, int *fd)
 		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
-			{	
+			{
 				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
 			}

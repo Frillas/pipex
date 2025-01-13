@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 13:16:28 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:46:40 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ void	close_all_fds(t_list *data)
 	free(data->fd);
 }
 
-int	wait_pid(int *pid, int nb_pipes)
+int	wait_pid(int *pid, int nb_cmds)
 {
 	int	i;
 	int	status;
 
 	i = 0;
-	while (i < nb_pipes)
+	while (i < nb_cmds)
 	{
 		if (waitpid(pid[i], &status, 0) == -1)
 			handle_error(strerror(errno), errno, NULL);

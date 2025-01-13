@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 13:00:53 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 10:46:12 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-void	close_last_fds(int *fd[2], int nb_pipes)
+static void	close_last_fds(int *fd[2], int nb_pipes)
 {
 	int	i;
 
@@ -32,7 +32,7 @@ void	close_last_fds(int *fd[2], int nb_pipes)
 	}
 }
 
-void	execute_parent(char **commands, char **envp, int fd)
+static void	execute_parent(char **commands, char **envp, t_list *data)
 {
 	char	**unix_path;
 	char	*path;
@@ -48,55 +48,70 @@ void	execute_parent(char **commands, char **envp, int fd)
 			if (execve(path, commands, envp) == -1)
 			{
 				free(path);
-				handle_error(strerror(errno), errno, &fd);
+				ptr_free(commands);
+				list_free(data);
+				handle_error(strerror(errno), errno, NULL);
 			}
 		}
 		free(path);
 		i++;
 	}
 	execve_fail(commands, unix_path, unix_path[i]);
-	close(fd);
+	list_free(data);
 	exit (127);
 }
 
-int	setup_fd_parent(char *file, int *fd[2], int nb_pipes)
+void	setup_fd_parent(char *file, int *fd[2], int nb_pipes, t_list *data)
 {
 	int	file_fd;
 
 	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (file_fd == -1)
-		handle_error(strerror(errno), 2, *fd);
+	{
+		close(fd[nb_pipes - 1][0]);
+		list_free(data);
+		handle_error(strerror(errno), 2, NULL);
+	}
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
+	{
+		close(fd[nb_pipes - 1][0]);
+		list_free(data);
 		handle_error(strerror(errno), errno, *fd);
+	}
 	close(file_fd);
 	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
+	{
+		list_free(data);
 		handle_error(strerror(errno), errno, *fd);
+	}
 	close(fd[nb_pipes - 1][0]);
-	return (file_fd);
 }
 
 void	last_child(int argc, char **argv, char **envp, t_list *data)
 {
 	char	**cmds;
-	int		file_fd;
 
 	close_last_fds(data->fd, data->nb_pipes);
-	file_fd = setup_fd_parent(argv[argc - 1], data->fd, data->nb_pipes);
+	setup_fd_parent(argv[argc - 1], data->fd, data->nb_pipes, data);
 	cmds = get_commands(argv[argc - 2]);
 	if (!(access(cmds[0], X_OK)) || !(access(argv[argc - 2], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
-				handle_error(strerror(errno), errno, &file_fd);
+			{
+				list_free(data);
+				ptr_free(cmds);
+				handle_error(strerror(errno), errno, NULL);
+			}
 		}
-		ptr_free(cmds);
-		handle_error("Command not found", 127, &file_fd);
+		execute_parent(cmds, envp, data);
 	}
 	if (errno != ENOENT)
 	{
+		list_free(data);
 		ptr_free(cmds);
-		handle_error(strerror(errno), 126, &file_fd);
+		handle_error(strerror(errno), 126, NULL);
 	}
-	execute_parent(cmds, envp, file_fd);
+	execute_parent(cmds, envp, data);
 }

@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:44:50 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 13:30:27 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:19:50 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ char	**get_unix_path(char **envp, char **commands)
 	char	**mypath;
 	char	*env_path;
 
+	mypath = NULL;
 	while (envp && *envp)
 	{
 		if (!strncmp("PATH", *envp, 4))
