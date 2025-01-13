@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 09:46:40 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 21:44:23 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	run_process(int argc, char **argv, char **envp)
 	int		error_status;
 
 	i = 0;
-	create_data((argc - 4), (argc - 3), &data);
+	create_data((argc - 5), (argc - 4), &data);
 	while (i < data.nb_cmds)
 	{
 		data.pid[i] = fork();
