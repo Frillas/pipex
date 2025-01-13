@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 11:00:09 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 09:48:51 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:16:01 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,17 @@ t_bool	is_file(char **cmds);
 void	execve_fail(char **commands, char **unix_path, char *is_path);
 void	handle_error(char *message, int error_save, int *fd);
 t_bool	is_empty(int argc, char **argv);
-
+//here_doc.c
+void	setup_here_doc(char *limiter, int *fd[2]);
+//get_next_line
+char	*get_next_line(int fd);
+char	*check_buf_size(int fd, char *remaining);
+char	*ft_big_buf(int fd, char *buffer, char *rem);
+char	*ft_add_remain(char *remain);
+char	*ft_add_line(char *rem);
+//get_next_line_utils
+char	*ft_strchr(const char *s, int c);
+char	*ft_strjoin(char *s1, char const *s2, size_t k, size_t l);
+void	ft_copy(size_t size, char *new_rem, char *end);
+char	*ft_small_buf(int fd, char *rem, int nb);
 #endif
