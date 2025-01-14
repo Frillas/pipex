@@ -6,13 +6,13 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 11:48:40 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:08:29 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/bonus/pipex_bonus.h"
 
-static void	close_child_fds(int *fd[2], int nb_fd, char *limiter)
+static void	close_first_fds(int *fd[2], int nb_fd, char *limiter)
 {
 	int	j;
 
@@ -30,7 +30,7 @@ static void	close_child_fds(int *fd[2], int nb_fd, char *limiter)
 	}
 }
 
-static void	execute_child(char **commands, char **envp, t_list *data)
+static void	handle_first(char **commands, char **envp, t_list *data)
 {
 	char	**unix_path;
 	char	*path;
@@ -57,6 +57,30 @@ static void	execute_child(char **commands, char **envp, t_list *data)
 	list_free(data);
 	execve_fail(commands, unix_path, unix_path[i]);
 	exit (127);
+}
+
+static void	execute_first(char **cmds, char **envp, char **argv, t_list *data)
+{
+	if (!(access(cmds[0], X_OK)) || !(access(argv[2], X_OK)))
+	{
+		if (is_file(cmds) == TRUE)
+		{
+			if (execve(cmds[0], cmds, envp) == -1)
+			{
+				list_free(data);
+				ptr_free(cmds);
+				handle_error(strerror(errno), errno, NULL);
+			}
+		}
+		handle_first(cmds, envp, data);
+	}
+	if (errno != ENOENT)
+	{
+		list_free(data);
+		ptr_free(cmds);
+		handle_error(strerror(errno), errno, NULL);
+	}
+	handle_first(cmds, envp, data);
 }
 
 static void	setup_fd_child(char *file, int *fd[2], t_list *data)
@@ -86,36 +110,12 @@ static void	setup_fd_child(char *file, int *fd[2], t_list *data)
 	}
 }
 
-static void	exe_cmd_child(char **cmds, char **envp, char **argv, t_list *data)
-{
-	if (!(access(cmds[0], X_OK)) || !(access(argv[2], X_OK)))
-	{
-		if (is_file(cmds) == TRUE)
-		{
-			if (execve(cmds[0], cmds, envp) == -1)
-			{
-				list_free(data);
-				ptr_free(cmds);
-				handle_error(strerror(errno), errno, NULL);
-			}
-		}
-		execute_child(cmds, envp, data);
-	}
-	if (errno != ENOENT)
-	{
-		list_free(data);
-		ptr_free(cmds);
-		handle_error(strerror(errno), errno, NULL);
-	}
-	execute_child(cmds, envp, data);
-}
-
 void	first_child(char **argv, char **envp, t_list *data)
 {
 	char	**commands;
 
 	commands = NULL;
-	close_child_fds(data->fd, data->nb_pipes, argv[1]);
+	close_first_fds(data->fd, data->nb_pipes, argv[1]);
 	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
 	{
 		setup_here_doc(argv[2], data->fd);
@@ -124,6 +124,6 @@ void	first_child(char **argv, char **envp, t_list *data)
 	{
 		setup_fd_child(argv[1], data->fd, data);
 		commands = get_commands(argv[2]);
-		exe_cmd_child(commands, envp, argv, data);
+		execute_first(commands, envp, argv, data);
 	}
 }

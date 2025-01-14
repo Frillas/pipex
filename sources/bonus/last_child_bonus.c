@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 12:00:49 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:28:30 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,35 @@ static void	close_last_fds(int *fd[2], int nb_pipes)
 	}
 }
 
-static void	execute_last(char **commands, char **envp, t_list *data)
+static void	setup_fd(char *file, int *fd[2], t_list *data, int mode)
+{
+	int	file_fd;
+	int	tot_pipes;
+
+	tot_pipes = data->nb_pipes;
+	file_fd = open(file, mode, 0664);
+	if (file_fd == -1)
+	{
+		close(fd[tot_pipes - 1][0]);
+		list_free(data);
+		handle_error(strerror(errno), 2, NULL);
+	}
+	if (dup2(file_fd, STDOUT_FILENO) == -1)
+	{
+		close(fd[tot_pipes - 1][0]);
+		list_free(data);
+		handle_error(strerror(errno), errno, *fd);
+	}
+	close(file_fd);
+	if (dup2(fd[tot_pipes - 1][0], STDIN_FILENO) == -1)
+	{
+		list_free(data);
+		handle_error(strerror(errno), errno, *fd);
+	}
+	close(fd[tot_pipes - 1][0]);
+}
+
+static void	handle_last(char **commands, char **envp, t_list *data)
 {
 	char	**unix_path;
 	char	*path;
@@ -61,69 +89,9 @@ static void	execute_last(char **commands, char **envp, t_list *data)
 	exit (127);
 }
 
-void	setup_fd_here_doc(char *file, int *fd[2], int nb_pipes, t_list *data)
+static void	execute_last(char **cmds, char **envp, char **argv, t_list *data)
 {
-	int	file_fd;
-
-	file_fd = open(file, O_WRONLY | O_APPEND | O_CREAT, 0664);
-	if (file_fd == -1)
-	{
-		close(fd[nb_pipes - 1][0]);
-		list_free(data);
-		handle_error(strerror(errno), 2, NULL);
-	}
-	if (dup2(file_fd, STDOUT_FILENO) == -1)
-	{
-		close(fd[nb_pipes - 1][0]);
-		list_free(data);
-		handle_error(strerror(errno), errno, *fd);
-	}
-	close(file_fd);
-	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
-	{
-		list_free(data);
-		handle_error(strerror(errno), errno, *fd);
-	}
-	close(fd[nb_pipes - 1][0]);
-}
-
-void	setup_fd_last(char *file, int *fd[2], int nb_pipes, t_list *data)
-{
-	int	file_fd;
-
-	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
-	if (file_fd == -1)
-	{
-		close(fd[nb_pipes - 1][0]);
-		list_free(data);
-		handle_error(strerror(errno), 2, NULL);
-	}
-	if (dup2(file_fd, STDOUT_FILENO) == -1)
-	{
-		close(fd[nb_pipes - 1][0]);
-		list_free(data);
-		handle_error(strerror(errno), errno, *fd);
-	}
-	close(file_fd);
-	if (dup2(fd[nb_pipes - 1][0], STDIN_FILENO) == -1)
-	{
-		list_free(data);
-		handle_error(strerror(errno), errno, *fd);
-	}
-	close(fd[nb_pipes - 1][0]);
-}
-
-void	last_child(int argc, char **argv, char **envp, t_list *data)
-{
-	char	**cmds;
-
-	close_last_fds(data->fd, data->nb_pipes);
-	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
-		setup_fd_here_doc(argv[argc - 1], data->fd, data->nb_pipes, data);
-	else
-		setup_fd_last(argv[argc - 1], data->fd, data->nb_pipes, data);
-	cmds = get_commands(argv[argc - 2]);
-	if (!(access(cmds[0], X_OK)) || !(access(argv[argc - 2], X_OK)))
+	if (!(access(cmds[0], X_OK)) || !(access(argv[data->nb_cmds + 1], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{
@@ -134,7 +102,7 @@ void	last_child(int argc, char **argv, char **envp, t_list *data)
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
-		execute_last(cmds, envp, data);
+		handle_last(cmds, envp, data);
 	}
 	if (errno != ENOENT)
 	{
@@ -142,5 +110,22 @@ void	last_child(int argc, char **argv, char **envp, t_list *data)
 		ptr_free(cmds);
 		handle_error(strerror(errno), 126, NULL);
 	}
-	execute_last(cmds, envp, data);
+	handle_last(cmds, envp, data);
+}
+
+void	last_child(int argc, char **argv, char **envp, t_list *data)
+{
+	char	**commands;
+	int		append_mode;
+	int		trunc_mode;
+
+	append_mode = O_WRONLY | O_APPEND | O_CREAT;
+	trunc_mode = O_WRONLY | O_TRUNC | O_CREAT;
+	close_last_fds(data->fd, data->nb_pipes);
+	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
+		setup_fd(argv[argc - 1], data->fd, data, append_mode);
+	else
+		setup_fd(argv[argc - 1], data->fd, data, trunc_mode);
+	commands = get_commands(argv[argc - 2]);
+	execute_last(commands, envp, argv, data);
 }
