@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:50:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 22:16:51 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 12:01:30 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 static char	*get_str(char *limiter)
 {
 	char	*str;
-	char	*new_line;
+	char	*new;
 
 	str = NULL;
-	new_line = NULL;
+	new = NULL;
 	while (1)
 	{
 		str = get_next_line(0);
@@ -26,8 +26,8 @@ static char	*get_str(char *limiter)
 			exit (130);
 		if ((ft_strncmp(limiter, str, ft_strlen(limiter) + 1)) == 0)
 			break ;
-		new_line = ft_strjoin(new_line, str, ft_strlen(new_line), ft_strlen(str));
-		if (new_line == NULL)
+		new = ft_strjoin(new, str, ft_strlen(new), ft_strlen(str));
+		if (new == NULL)
 		{
 			free(str);
 			handle_error("Memory allocation failed", 1, NULL);
@@ -35,7 +35,7 @@ static char	*get_str(char *limiter)
 		free(str);
 	}
 	free(str);
-	return (new_line);
+	return (new);
 }
 
 static char	*add_line_return(char *source)
@@ -68,11 +68,14 @@ void	setup_here_doc(char *source, int *fd[2])
 	str = get_str(limiter);
 	if (str == NULL)
 		handle_error("Here doc : Empty line", 1, NULL);
-	write(fd[0][0], str, ft_strlen(str) + 1);
+	if (write(fd[0][1], str, ft_strlen(str)) == -1)
+		handle_error(strerror(errno), errno, NULL);
 	if (dup2(fd[0][0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, NULL);
 	close(fd[0][0]);
 	if (dup2(fd[0][1], STDOUT_FILENO) == -1)
 		handle_error(strerror(errno), errno, NULL);
 	close(fd[0][1]);
+	free(limiter);
+	exit(EXIT_SUCCESS);
 }

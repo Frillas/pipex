@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 18:15:41 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:48:40 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	close_child_fds(int *fd[2], int nb_fd, char *limiter)
 	{
 		if ((j == 0) && (ft_strncmp("here_doc", limiter, 9)) != 0)
 			close(fd[j][0]);
-		else
+		else if (j != 0)
 		{
 			close(fd[j][0]);
 			close(fd[j][1]);
@@ -114,16 +114,16 @@ void	first_child(char **argv, char **envp, t_list *data)
 {
 	char	**commands;
 
+	commands = NULL;
 	close_child_fds(data->fd, data->nb_pipes, argv[1]);
-	if (!ft_strncmp("here_doc", argv[1], 9))
+	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
 	{
 		setup_here_doc(argv[2], data->fd);
-		commands = get_commands(argv[3]);
 	}
 	else
-	{	
+	{
 		setup_fd_child(argv[1], data->fd, data);
 		commands = get_commands(argv[2]);
+		exe_cmd_child(commands, envp, argv, data);
 	}
-	exe_cmd_child(commands, envp, argv, data);
 }
