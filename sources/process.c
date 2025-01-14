@@ -6,13 +6,29 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 09:20:40 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:47:19 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-void	execute_parent(char **commands, char **envp)
+static void	setup_fd(char *file, int *fd)
+{
+	int	file_fd;
+
+	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
+	if (file_fd == -1)
+		handle_error(strerror(errno), 1, fd);
+	close(fd[1]);
+	if (dup2(file_fd, STDOUT_FILENO) == -1)
+		handle_error(strerror(errno), errno, fd);
+	close(file_fd);
+	if (dup2(fd[0], STDIN_FILENO) == -1)
+		handle_error(strerror(errno), errno, fd);
+	close(fd[0]);
+}
+
+static void	execute_second_child(char **commands, char **envp)
 {
 	char	**unix_path;
 	char	*path;
@@ -39,27 +55,11 @@ void	execute_parent(char **commands, char **envp)
 	exit (127);
 }
 
-void	setup_fd_parent(char *file, int *fd)
-{
-	int	file_fd;
-
-	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
-	if (file_fd == -1)
-		handle_error(strerror(errno), 2, fd);
-	close(fd[1]);
-	if (dup2(file_fd, STDOUT_FILENO) == -1)
-		handle_error(strerror(errno), errno, fd);
-	close(file_fd);
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		handle_error(strerror(errno), errno, fd);
-	close(fd[0]);
-}
-
-void	handle_parent(char **argv, char **envp, int *fd)
+static void	handle_second_child(char **argv, char **envp, int *fd)
 {
 	char	**cmds;
 
-	setup_fd_parent(argv[4], fd);
+	setup_fd(argv[4], fd);
 	cmds = get_commands(argv[3]);
 	if (!(access(cmds[0], X_OK)) || !(access(argv[3], X_OK)))
 	{
@@ -71,14 +71,14 @@ void	handle_parent(char **argv, char **envp, int *fd)
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
-		execute_parent(cmds, envp);
+		execute_second_child(cmds, envp);
 	}
 	if (errno != ENOENT)
 	{
 		ptr_free(cmds);
 		handle_error(strerror(errno), 126, NULL);
 	}
-	execute_parent(cmds, envp);
+	execute_second_child(cmds, envp);
 }
 
 void	run_process(char **argv, char **envp)
@@ -87,7 +87,6 @@ void	run_process(char **argv, char **envp)
 	pid_t	pid1;
 	pid_t	pid2;
 	int		status;
-	int		exit_code;
 
 	if (pipe(fd) == -1)
 		handle_error(strerror(errno), errno, NULL);
@@ -95,17 +94,17 @@ void	run_process(char **argv, char **envp)
 	if (pid1 < 0)
 		handle_error(strerror(errno), errno, NULL);
 	if (pid1 == 0)
-		handle_child(argv, envp, fd);
+		handle_first_child(argv, envp, fd);
 	pid2 = fork();
 	if (pid2 < 0)
 		handle_error(strerror(errno), errno, NULL);
 	if (pid2 == 0)
-		handle_parent(argv, envp, fd);
+		handle_second_child(argv, envp, fd);
 	close(fd[0]);
 	close(fd[1]);
 	if ((waitpid(pid1, NULL, 0) != pid1))
 		handle_error(strerror(errno), errno, NULL);
 	if ((waitpid(pid2, &status, 0) != pid2))
 		handle_error(strerror(errno), errno, NULL);
-	exit(exit_code = (status >> 8) & 0xFF);
+	exit((status >> 8) & 0xFF);
 }

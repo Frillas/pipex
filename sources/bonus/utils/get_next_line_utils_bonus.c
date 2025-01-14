@@ -6,11 +6,11 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 15:23:49 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 18:12:48 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:07:14 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/bonus/pipex_bonus.h"
+#include "../../../header/bonus/pipex_bonus.h"
 
 char	*ft_strchr(const char *s, int c)
 {

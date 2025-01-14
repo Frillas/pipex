@@ -8,11 +8,11 @@ OBJ_DIR = ./obj
 
 SRC_SPECIFIC = sources/main.c sources/parsing.c sources/process.c sources/children.c
 
-BONUS_SPECIFIC = sources/bonus/first_child_bonus.c sources/bonus/last_child_bonus.c \
-				 sources/bonus/main_bonus.c sources/bonus/middle_child_bonus.c \
-				 sources/bonus/parsing_bonus.c sources/bonus/process_bonus.c \
-				 sources/bonus/utils_bonus.c sources/bonus/get_next_line_bonus.c \
-				 sources/bonus/get_next_line_utils_bonus.c sources/bonus/here_doc.c
+BONUS_SPECIFIC = sources/bonus/main/main_bonus.c sources/bonus/main/process_bonus.c \
+				 sources/bonus/main/parsing_bonus.c sources/bonus/childrens/first_child_bonus.c \
+				 sources/bonus/childrens/last_child_bonus.c sources/bonus/childrens/middle_child_bonus.c \
+				 sources/bonus/childrens/here_doc_bonus.c sources/bonus/utils/get_next_line_bonus.c \
+				 sources/bonus/utils/get_next_line_utils_bonus.c sources/bonus/utils/utils_bonus.c 
 
 COMMOM_SRC = sources/utils.c sources/ft_split.c sources/path.c \
 			 sources/error.c sources/arg_split.c

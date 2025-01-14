@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/12 18:32:10 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:48:14 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ char	**ft_split(char const *s, char c);
 //arg_split
 char	**arg_split(char const *s);
 //process
-void	execute_parent(char **commands, char **envp);
-void	handle_parent(char **argv, char **envp, int *fd);
 void	run_process(char **argv, char **envp);
 //path
 char	**get_unix_path(char **envp, char **commands);
@@ -47,9 +45,6 @@ void	execve_fail(char **commands, char **unix_path, char *is_path);
 void	handle_error(char *message, int error_save, int *fd);
 t_bool	is_empty(int argc, char **argv);
 //children.c
-void	handle_child(char **argv, char **envp, int *fd);
-void	execute_command_child(char **commands, char **envp, char **argv);
-void	setup_fd_child(char *file, int *fd);
-void	execute_child(char **commands, char **envp);
+void	handle_first_child(char **argv, char **envp, int *fd);
 
 #endif

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   here_doc.c                                         :+:      :+:    :+:   */
+/*   here_doc_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:50:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 12:01:30 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 18:25:42 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/bonus/pipex_bonus.h"
+#include "../../../header/bonus/pipex_bonus.h"
 
 static char	*get_str(char *limiter)
 {
@@ -38,7 +38,7 @@ static char	*get_str(char *limiter)
 	return (new);
 }
 
-static char	*add_line_return(char *source)
+static char	*add_line_return(char *source, t_list *data, int *fd[2])
 {
 	char	*limiter;
 	size_t	size;
@@ -48,7 +48,12 @@ static char	*add_line_return(char *source)
 	size = ft_strlen(source);
 	limiter = (char *)malloc(sizeof(char) * size + 2);
 	if (limiter == NULL)
+	{
+		close(fd[0][0]);
+		close(fd[0][1]);
+		list_free(data);
 		handle_error("Memory allocation failed", 1, NULL);
+	}
 	while (i < size)
 	{
 		limiter[i] = source[i];
@@ -59,12 +64,12 @@ static char	*add_line_return(char *source)
 	return (limiter);
 }
 
-void	setup_here_doc(char *source, int *fd[2])
+void	setup_here_doc(char *source, int *fd[2], t_list *data)
 {
 	char	*str;
 	char	*limiter;
 
-	limiter = add_line_return(source);
+	limiter = add_line_return(source, data, fd);
 	str = get_str(limiter);
 	if (str == NULL)
 		handle_error("Here doc : Empty line", 1, NULL);

@@ -6,11 +6,11 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 16:27:15 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:06:27 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/bonus/pipex_bonus.h"
+#include "../../../header/bonus/pipex_bonus.h"
 
 static void	close_middle_fds(int *fd[2], int nb_pipes, int i)
 {

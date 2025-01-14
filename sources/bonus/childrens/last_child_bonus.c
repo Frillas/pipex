@@ -6,11 +6,11 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 16:28:30 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:47:33 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/bonus/pipex_bonus.h"
+#include "../../../header/bonus/pipex_bonus.h"
 
 static void	close_last_fds(int *fd[2], int nb_pipes)
 {
@@ -43,7 +43,7 @@ static void	setup_fd(char *file, int *fd[2], t_list *data, int mode)
 	{
 		close(fd[tot_pipes - 1][0]);
 		list_free(data);
-		handle_error(strerror(errno), 2, NULL);
+		handle_error(strerror(errno), 1, NULL);
 	}
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
 	{

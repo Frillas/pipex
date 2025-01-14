@@ -6,11 +6,11 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 16:08:29 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/14 18:17:28 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/bonus/pipex_bonus.h"
+#include "../../../header/bonus/pipex_bonus.h"
 
 static void	close_first_fds(int *fd[2], int nb_fd, char *limiter)
 {
@@ -118,7 +118,7 @@ void	first_child(char **argv, char **envp, t_list *data)
 	close_first_fds(data->fd, data->nb_pipes, argv[1]);
 	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
 	{
-		setup_here_doc(argv[2], data->fd);
+		setup_here_doc(argv[2], data->fd, data);
 	}
 	else
 	{
