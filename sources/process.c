@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 17:47:19 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:27:08 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,17 @@ static void	setup_fd(char *file, int *fd)
 
 	file_fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (file_fd == -1)
+	{
+		write(2, file, ft_strlen(file));
+		write(2, ": ", 2);
 		handle_error(strerror(errno), 1, fd);
+	}
 	close(fd[1]);
 	if (dup2(file_fd, STDOUT_FILENO) == -1)
+	{
+		close(file_fd);
 		handle_error(strerror(errno), errno, fd);
+	}
 	close(file_fd);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		handle_error(strerror(errno), errno, fd);
@@ -92,12 +99,12 @@ void	run_process(char **argv, char **envp)
 		handle_error(strerror(errno), errno, NULL);
 	pid1 = fork();
 	if (pid1 < 0)
-		handle_error(strerror(errno), errno, NULL);
+		handle_error(strerror(errno), errno, fd);
 	if (pid1 == 0)
 		handle_first_child(argv, envp, fd);
 	pid2 = fork();
 	if (pid2 < 0)
-		handle_error(strerror(errno), errno, NULL);
+		handle_error(strerror(errno), errno, fd);
 	if (pid2 == 0)
 		handle_second_child(argv, envp, fd);
 	close(fd[0]);

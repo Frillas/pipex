@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:44:50 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 09:19:50 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:37:05 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char	*get_path(char *unix_path, char *commands, char **unix_p, char **cmd)
 	{
 		ptr_free(unix_p);
 		ptr_free(cmd);
+		handle_error("memory allocation failed in get path", 1, NULL);
 		exit (EXIT_FAILURE);
 	}
 	ft_strlcpy(path, unix_path, len_path + 1);
@@ -75,7 +76,10 @@ static t_bool	is_dir(char **cmds, size_t len_cmd)
 	i = 0;
 	path = (char *) malloc(sizeof(char) * (len_cmd + 1));
 	if (path == NULL)
+	{
+		handle_error("memory allocation failed in is_dir", 1, NULL);
 		return (FALSE);
+	}
 	while (i < len_cmd)
 	{
 		path[i] = cmds[0][i];

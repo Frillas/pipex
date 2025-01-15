@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 16:49:59 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 10:59:35 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,16 @@ static void	setup_fd_child(char *file, int *fd)
 	{
 		file_fd = open(file, O_RDONLY);
 		if (file_fd == -1)
-			handle_error(strerror(errno), errno, NULL);
+		{
+			write(2, file, ft_strlen(file));
+			write(2, ": ", 2);
+			handle_error(strerror(errno), errno, fd);
+		}
 		if (dup2(file_fd, STDIN_FILENO) == -1)
-			handle_error(strerror(errno), errno, &file_fd);
+		{
+			close(file_fd);
+			handle_error(strerror(errno), errno, fd);
+		}
 		close(file_fd);
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 			handle_error(strerror(errno), errno, fd);
