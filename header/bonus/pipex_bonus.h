@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 11:00:09 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 14:15:35 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 21:24:00 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "type_bonus.h"
 
 //process_bonus
-void	run_process(int argc, char **argv, char **envp);
+void	run_process(int argc, char **argv, char **envp, int i);
 //first_child
 void	first_child(char **argv, char **envp, t_list *data);
 //last_child
