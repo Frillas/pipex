@@ -6,11 +6,20 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:07:34 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 10:59:35 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 17:20:34 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+
+static void	empty_fd(int *fd)
+{
+	if (dup2(fd[1], STDOUT_FILENO) == -1)
+		handle_error(strerror(errno), errno, fd);
+	write(STDOUT_FILENO, "", 0);
+	close(fd[1]);
+	exit (EXIT_SUCCESS);
+}
 
 static void	setup_fd_child(char *file, int *fd)
 {
@@ -36,13 +45,7 @@ static void	setup_fd_child(char *file, int *fd)
 		close(fd[1]);
 	}
 	else
-	{
-		if (dup2(fd[1], STDOUT_FILENO) == -1)
-			handle_error(strerror(errno), errno, fd);
-		write(STDOUT_FILENO, "", 0);
-		close(fd[1]);
-		exit (EXIT_SUCCESS);
-	}
+		empty_fd(fd);
 }
 
 static void	execute_child(char **commands, char **envp)
