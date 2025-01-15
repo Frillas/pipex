@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 17:06:27 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 17:04:35 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,21 @@ static void	close_middle_fds(int *fd[2], int nb_pipes, int i)
 	}
 }
 
-static void	setup_fd_mid(int *fd[2], int i)
+static void	setup_fd_mid(int *fd[2], int i, t_list *data)
 {
 	if (dup2(fd[i - 1][0], STDIN_FILENO) == -1)
+	{
+		close_all_fds(data);
+		list_free(data);
 		handle_error(strerror(errno), errno, NULL);
+	}
 	close(fd[i - 1][0]);
 	if (dup2(fd[i][1], STDOUT_FILENO) == -1)
+	{
+		close_all_fds(data);
+		list_free(data);
 		handle_error(strerror(errno), errno, NULL);
+	}
 	close(fd[i][1]);
 }
 
@@ -102,7 +110,7 @@ void	middle_child(char **argv, char **envp, t_list *data, int i)
 	char	**commands;
 
 	close_middle_fds(data->fd, data->nb_pipes, i);
-	setup_fd_mid(data->fd, i);
+	setup_fd_mid(data->fd, i, data);
 	commands = get_commands(argv[i + 2]);
 	execute_middle(commands, envp, argv, data);
 }

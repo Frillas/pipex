@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 10:55:28 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 17:12:28 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,20 +45,16 @@ static void	setup_fd(char *file, int *fd[2], t_list *data, int mode)
 		list_free(data);
 		write(2, file, ft_strlen(file));
 		write(2, ": ", 2);
-		handle_error(strerror(errno), 1, NULL);
+		handle_error("Open error", 1, NULL);
 	}
-	if (dup2(file_fd, STDOUT_FILENO) == -1)
+	if ((dup2(file_fd, STDOUT_FILENO) == -1)
+		|| (dup2(fd[tot_pipes - 1][0], STDIN_FILENO) == -1))
 	{
 		close(fd[tot_pipes - 1][0]);
 		list_free(data);
 		handle_error(strerror(errno), errno, NULL);
 	}
 	close(file_fd);
-	if (dup2(fd[tot_pipes - 1][0], STDIN_FILENO) == -1)
-	{
-		list_free(data);
-		handle_error(strerror(errno), errno, NULL);
-	}
 	close(fd[tot_pipes - 1][0]);
 }
 

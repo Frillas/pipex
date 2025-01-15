@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:41:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 09:24:10 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:55:01 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@ void	list_free(t_list *data)
 	int	i;
 
 	i = 0;
-	while (i < data->nb_pipes)
+	if (data->fd != NULL)
 	{
-		free(data->fd[i]);
-		i++;
+		while ((i < data->nb_pipes) && (data->fd != NULL))
+		{
+			free(data->fd[i]);
+			i++;
+		}
+		free(data->fd);
 	}
-	free(data->fd);
 	free(data->pid);
 }
 
@@ -35,4 +38,21 @@ void	data_free(int *fd[2], char *str, char *limiter, t_list *data)
 	if (limiter != NULL)
 		free(limiter);
 	list_free(data);
+}
+
+void	close_all_fds(t_list *data)
+{
+	int	i;
+
+	i = 0;
+	while ((i < data->nb_pipes) && (data->fd[i] != NULL))
+	{
+		close(data->fd[i][0]);
+		close(data->fd[i][1]);
+		free(data->fd[i]);
+		data->fd[i] = NULL;
+		i++;
+	}
+	free(data->fd);
+	data->fd = NULL;
 }

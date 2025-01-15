@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 09:19:34 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/15 16:52:41 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,18 +91,30 @@ static void	setup_fd_child(char *file, int *fd[2], t_list *data)
 	{
 		file_fd = open(file, O_RDONLY);
 		if (file_fd == -1)
+		{
+			close_all_fds(data);
+			list_free(data);
 			handle_error(strerror(errno), errno, NULL);
-		if (dup2(file_fd, STDIN_FILENO) == -1)
+		}
+		if ((dup2(file_fd, STDIN_FILENO) == -1)
+			|| (dup2(fd[0][1], STDOUT_FILENO) == -1))
+		{
+			close(file_fd);
+			close_all_fds(data);
+			list_free(data);
 			handle_error(strerror(errno), errno, NULL);
+		}
 		close(file_fd);
-		if (dup2(fd[0][1], STDOUT_FILENO) == -1)
-			handle_error(strerror(errno), errno, *fd);
 		close(fd[0][1]);
 	}
 	else
 	{
 		if (dup2(fd[0][1], STDOUT_FILENO) == -1)
+		{
+			close_all_fds(data);
+			list_free(data);
 			handle_error(strerror(errno), errno, *fd);
+		}
 		write(STDOUT_FILENO, "", 0);
 		close(fd[0][1]);
 		list_free(data);
