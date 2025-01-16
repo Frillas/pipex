@@ -1,9 +1,0 @@
-total 56
-4206626 drwxrwxr-x 3 anthonin anthonin  4096 janv. 15 12:46 header
-4204214 -rw-rw-r-- 1 anthonin anthonin  1211 janv. 16 09:30 Makefile
-4201656 drwxrwxr-x 3 anthonin anthonin  4096 janv. 16 09:30 obj
-4201668 -rwxrwxr-x 1 anthonin anthonin 31608 janv. 16 09:31 pipex
-4202257 -rwxrwxr-x 1 anthonin anthonin     0 janv. 16 09:31 result.txt
-4211253 -rwxrwxr-x 1 anthonin anthonin    28 janv. 15 19:11 script.sh
-4206644 drwxrwxr-x 3 anthonin anthonin  4096 janv. 16 08:39 sources
-4206164 -rwxrwxr-x 1 anthonin anthonin    56 janv. 15 12:46 test.txt
