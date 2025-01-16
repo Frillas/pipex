@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/14 17:06:47 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/16 08:41:43 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,11 @@
 
 void	parsing(int argc, char **argv)
 {
-	int	res;
-
-	res = ft_strncmp("here_doc", argv[1], 9);
 	if (argc < 5)
 		handle_error("Error: Insufficient number of arguments.", 1, NULL);
-	if (res == 0)
+	if (ft_strncmp("here_doc", argv[1], 9) == 0)
 	{
-		argv = argv + 2;
+		argv += 2;
 		argc -= 2;
 		if (is_empty(argc, argv))
 			exit(EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 11:00:09 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 21:24:00 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:01:49 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 void	list_free(t_list *data);
 void	data_free(int *fd[2], char *str, char *limiter, t_list *data);
 void	close_all_fds(t_list *data);
+void	fd_error(char *str_error, int *fd[2], t_list *data, int file_fd);
 //ft_split
 char	**ft_split(char const *s, char c);
 //arg_split

@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:11:38 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 10:07:43 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/16 08:39:05 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_bool	is_empty(int argc, char **argv)
 		}
 		if (only_space == TRUE)
 		{
-			write(STDERR_FILENO, "Error: empty argument.\n", 23);
+			write(STDERR_FILENO, "Error: No valid arguments provided\n", 35);
 			return (TRUE);
 		}
 		i++;

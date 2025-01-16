@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_bonus.c                                      :+:      :+:    :+:   */
+/*   close_free_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:41:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 14:55:01 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:04:32 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,14 @@ void	close_all_fds(t_list *data)
 	}
 	free(data->fd);
 	data->fd = NULL;
+}
+
+void	fd_error(char *str_error, int *fd[2], t_list *data, int file_fd)
+{
+	if (file_fd == -1)
+		close(file_fd);
+	if (fd != NULL)
+		close_all_fds(data);
+	list_free(data);
+	handle_error(str_error, EXIT_FAILURE, NULL);
 }

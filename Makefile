@@ -1,7 +1,7 @@
 NAME = pipex
 
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
 OBJ_DIR = ./obj
@@ -12,7 +12,7 @@ BONUS_SPECIFIC = sources/bonus/main/main_bonus.c sources/bonus/main/process_bonu
 				 sources/bonus/main/parsing_bonus.c sources/bonus/childrens/first_child_bonus.c \
 				 sources/bonus/childrens/last_child_bonus.c sources/bonus/childrens/middle_child_bonus.c \
 				 sources/bonus/childrens/here_doc_bonus.c sources/bonus/utils/get_next_line_bonus.c \
-				 sources/bonus/utils/get_next_line_utils_bonus.c sources/bonus/utils/utils_bonus.c 
+				 sources/bonus/utils/get_next_line_utils_bonus.c sources/bonus/utils/close_free_bonus.c
 
 COMMOM_SRC = sources/utils.c sources/ft_split.c sources/path.c \
 			 sources/error.c sources/arg_split.c
