@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:41:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/16 09:04:32 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 09:24:57 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	close_all_fds(t_list *data)
 	data->fd = NULL;
 }
 
-void	fd_error(char *str_error, int *fd[2], t_list *data, int file_fd)
+void	fct_error(char *str_error, int *fd[2], t_list *data, int file_fd)
 {
 	if (file_fd == -1)
 		close(file_fd);

@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/16 16:41:59 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 09:25:52 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,17 +92,17 @@ static void	setup_fd_child(char *file, int *fd[2], t_list *data)
 	{
 		file_fd = open(file, O_RDONLY);
 		if (file_fd == -1)
-			fd_error(strerror(errno), fd, data, file_fd);
+			fct_error(strerror(errno), fd, data, file_fd);
 		if ((dup2(file_fd, STDIN_FILENO) == -1)
 			|| (dup2(fd[0][1], STDOUT_FILENO) == -1))
-			fd_error(strerror(errno), fd, data, file_fd);
+			fct_error(strerror(errno), fd, data, file_fd);
 		close(file_fd);
 		close(fd[0][1]);
 	}
 	else
 	{
 		if (dup2(data->fd[0][1], STDOUT_FILENO) == -1)
-			fd_error(strerror(errno), fd, data, file_fd);
+			fct_error(strerror(errno), fd, data, file_fd);
 		write(STDOUT_FILENO, "", 0);
 		close(data->fd[0][1]);
 		list_free(data);

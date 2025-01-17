@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:50:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 10:01:07 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/16 23:12:16 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,6 @@ void	setup_here_doc(char *source, int *fd[2], t_list *data)
 
 	limiter = add_line_return(source, data, fd);
 	str = get_str(limiter, data, fd);
-	if (str == NULL)
-	{
-		data_free(fd, str, limiter, data);
-		handle_error("Here doc : get str error", 1, NULL);
-	}
 	if (write(fd[0][1], str, ft_strlen(str)) == -1)
 	{
 		data_free(fd, str, limiter, data);

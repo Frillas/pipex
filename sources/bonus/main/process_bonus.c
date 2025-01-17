@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 20:13:36 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 09:26:41 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,14 @@ static void	create_data(int tot_pipes, int tot_cmds, t_list *data)
 	create_pipe(data);
 }
 
-static void	wait_pid(int *pid, int nb_cmds)
+static void	wait_pid(int *pid, int nb_cmds, char **argv)
 {
 	int	i;
 	int	status;
 
 	i = 0;
+	if ((ft_strncmp("here_doc", argv[1], 9)) == 0)
+		i++;
 	while (i < nb_cmds)
 	{
 		if (waitpid(pid[i], &status, 0) == -1)
@@ -77,11 +79,7 @@ void	run_process(int argc, char **argv, char **envp, int i)
 	{
 		data.pid[i] = fork();
 		if (data.pid[i] < 0)
-		{
-			close_all_fds(&data);
-			list_free(&data);
-			handle_error("Fork error", 1, NULL);
-		}
+			fct_error(strerror(errno), data.fd, &data, 0);
 		else if (data.pid[i] == 0)
 		{
 			if (i == 0)
@@ -91,8 +89,11 @@ void	run_process(int argc, char **argv, char **envp, int i)
 			else
 				middle_child(argv, envp, &data, i);
 		}
+		if (((ft_strncmp("here_doc", argv[1], 9)) == 0) && (i == 0))
+			if (wait(NULL) == -1)
+				fct_error(strerror(errno), data.fd, &data, 0);
 		i++;
 	}
 	close_all_fds(&data);
-	wait_pid(data.pid, data.nb_cmds);
+	wait_pid(data.pid, data.nb_cmds, argv);
 }
