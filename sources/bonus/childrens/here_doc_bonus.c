@@ -6,26 +6,26 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:50:21 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/16 23:12:16 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:24:50 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../header/bonus/pipex_bonus.h"
 
-static char	*get_str(char *limiter, t_list *data, int *fd[2])
+static char	*get_str(char *limiter, t_list *data, int *fd[2], char *str)
 {
-	char	*str;
 	char	*new;
 
-	str = NULL;
 	new = NULL;
 	while (1)
 	{
+		write(1, "> ", 2);
 		str = get_next_line(0);
 		if (str == NULL)
 		{
+			free(new);
 			data_free(fd, str, limiter, data);
-			handle_error("Here doc : get next line error", 1, NULL);
+			handle_error("\nHere doc : delimited by end of file", 1, NULL);
 		}
 		if ((ft_strncmp(limiter, str, ft_strlen(limiter) + 1)) == 0)
 			break ;
@@ -33,7 +33,7 @@ static char	*get_str(char *limiter, t_list *data, int *fd[2])
 		if (new == NULL)
 		{
 			data_free(fd, str, limiter, data);
-			handle_error("Here doc : memory allocation failed", 1, NULL);
+			handle_error("\nHere doc : memory allocation failed", 1, NULL);
 		}
 		free(str);
 	}
@@ -73,7 +73,7 @@ void	setup_here_doc(char *source, int *fd[2], t_list *data)
 	char	*limiter;
 
 	limiter = add_line_return(source, data, fd);
-	str = get_str(limiter, data, fd);
+	str = get_str(limiter, data, fd, NULL);
 	if (write(fd[0][1], str, ft_strlen(str)) == -1)
 	{
 		data_free(fd, str, limiter, data);

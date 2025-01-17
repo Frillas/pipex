@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 20:17:59 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/16 23:00:09 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 13:38:59 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,11 @@ static void	setup_fd(char *file, int *fd[2], t_list *data, int mode)
 	close(fd[tot_pipes - 1][0]);
 }
 
-static void	handle_last(char **commands, char **envp, t_list *data)
+static void	handle_last(char **commands, char **envp, t_list *data, int i)
 {
 	char	**unix_path;
 	char	*path;
-	int		i;
 
-	i = 0;
 	unix_path = get_unix_path(envp, commands);
 	while (unix_path[i])
 	{
@@ -73,6 +71,7 @@ static void	handle_last(char **commands, char **envp, t_list *data)
 		{
 			if (execve(path, commands, envp) == -1)
 			{
+				write_command(commands[0]);
 				free(path);
 				ptr_free(commands);
 				list_free(data);
@@ -95,20 +94,22 @@ static void	execute_last(char **cmds, char **envp, char **argv, t_list *data)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
 			{
+				write_command(cmds[0]);
 				list_free(data);
 				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
-		handle_last(cmds, envp, data);
+		handle_last(cmds, envp, data, 0);
 	}
 	if (errno != ENOENT)
 	{
+		write_command(cmds[0]);
 		list_free(data);
 		ptr_free(cmds);
 		handle_error(strerror(errno), 126, NULL);
 	}
-	handle_last(cmds, envp, data);
+	handle_last(cmds, envp, data, 0);
 }
 
 void	last_child(int argc, char **argv, char **envp, t_list *data)

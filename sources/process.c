@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:45:58 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 11:27:08 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:34:54 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static void	execute_second_child(char **commands, char **envp)
 		{
 			if (execve(path, commands, envp) == -1)
 			{
+				write_command(commands[0]);
 				free(path);
 				ptr_free(commands);
 				handle_error(strerror(errno), errno, NULL);
@@ -74,6 +75,7 @@ static void	handle_second_child(char **argv, char **envp, int *fd)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
 			{
+				write_command(cmds[0]);
 				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
 			}
@@ -82,6 +84,7 @@ static void	handle_second_child(char **argv, char **envp, int *fd)
 	}
 	if (errno != ENOENT)
 	{
+		write_command(cmds[0]);
 		ptr_free(cmds);
 		handle_error(strerror(errno), 126, NULL);
 	}

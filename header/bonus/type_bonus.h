@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 12:31:46 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/13 18:13:37 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 13:07:55 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_list
 {
 	int		**fd;
 	pid_t	*pid;
+	int		target;
 	int		nb_pipes;
 	int		nb_cmds;
 }	t_list;

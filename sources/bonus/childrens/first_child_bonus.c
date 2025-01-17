@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 19:42:16 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/17 09:25:52 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 12:13:38 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,11 @@ static void	close_first_fds(int *fd[2], int nb_fd, char *limiter)
 	}
 }
 
-static void	handle_first(char **commands, char **envp, t_list *data)
+static void	handle_first(char **commands, char **envp, t_list *data, int i)
 {
 	char	**unix_path;
 	char	*path;
-	int		i;
 
-	i = 0;
 	unix_path = get_unix_path(envp, commands);
 	while (unix_path[i])
 	{
@@ -45,6 +43,7 @@ static void	handle_first(char **commands, char **envp, t_list *data)
 		{
 			if (execve(path, commands, envp) == -1)
 			{
+				write_command(commands[0]);
 				free(path);
 				ptr_free(commands);
 				list_free(data);
@@ -67,20 +66,22 @@ static void	execute_first(char **cmds, char **envp, char **argv, t_list *data)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
 			{
+				write_command(cmds[0]);
 				list_free(data);
 				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
-		handle_first(cmds, envp, data);
+		handle_first(cmds, envp, data, 0);
 	}
-	if (errno != ENOENT)
+	if (errno == EACCES)
 	{
+		write_command(cmds[0]);
 		list_free(data);
 		ptr_free(cmds);
 		handle_error(strerror(errno), errno, NULL);
 	}
-	handle_first(cmds, envp, data);
+	handle_first(cmds, envp, data, 0);
 }
 
 static void	setup_fd_child(char *file, int *fd[2], t_list *data)

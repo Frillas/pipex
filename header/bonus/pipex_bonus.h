@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 11:00:09 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/17 09:46:50 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 13:04:01 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ t_bool	is_file(char **cmds);
 void	execve_fail(char **commands, char **unix_path, char *is_path);
 void	handle_error(char *message, int error_save, int *fd);
 t_bool	is_empty(int argc, char **argv);
+void	write_command(char *cmds);
 //here_doc.c
 void	setup_here_doc(char *limiter, int *fd[2], t_list *data);
 //get_next_line

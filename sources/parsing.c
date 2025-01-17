@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 10:58:26 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/07 11:14:00 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:01:38 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 void	parsing(int argc, char **argv)
 {
 	if (argc < 5)
-		handle_error("Error: Insufficient number of arguments.", 1, NULL);
+		handle_error("Insufficient number of arguments.", EXIT_FAILURE, NULL);
 	else if (argc > 5)
-		handle_error("Error: Too much arguments.", 1, NULL);
+		handle_error("Too much arguments.", EXIT_FAILURE, NULL);
 	if (is_empty(argc, argv))
 		exit(EXIT_FAILURE);
 	if (access(argv[1], F_OK | R_OK) != 0)

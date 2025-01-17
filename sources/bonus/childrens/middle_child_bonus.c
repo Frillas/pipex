@@ -6,7 +6,7 @@
 /*   By: aroullea <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:47:45 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/15 17:04:35 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 13:16:38 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,11 @@ static void	setup_fd_mid(int *fd[2], int i, t_list *data)
 	close(fd[i][1]);
 }
 
-static void	handle_middle(char **commands, char **envp, t_list *data)
+static void	handle_middle(char **commands, char **envp, t_list *data, int i)
 {
 	char	**unix_path;
 	char	*path;
-	int		i;
 
-	i = 0;
 	unix_path = get_unix_path(envp, commands);
 	while (unix_path[i])
 	{
@@ -67,6 +65,7 @@ static void	handle_middle(char **commands, char **envp, t_list *data)
 		{
 			if (execve(path, commands, envp) == -1)
 			{
+				write_command(commands[0]);
 				free(path);
 				ptr_free(commands);
 				list_free(data);
@@ -83,34 +82,37 @@ static void	handle_middle(char **commands, char **envp, t_list *data)
 
 static void	execute_middle(char **cmds, char **envp, char **argv, t_list *data)
 {
-	if (!(access(cmds[0], X_OK)) || !(access(argv[2], X_OK)))
+	if (!(access(cmds[0], X_OK)) || !(access(argv[data->target], X_OK)))
 	{
 		if (is_file(cmds) == TRUE)
 		{
 			if (execve(cmds[0], cmds, envp) == -1)
 			{
+				write_command(cmds[0]);
 				list_free(data);
 				ptr_free(cmds);
 				handle_error(strerror(errno), errno, NULL);
 			}
 		}
-		handle_middle(cmds, envp, data);
+		handle_middle(cmds, envp, data, 0);
 	}
 	if (errno != ENOENT)
 	{
+		write_command(cmds[0]);
 		list_free(data);
 		ptr_free(cmds);
 		handle_error(strerror(errno), errno, NULL);
 	}
-	handle_middle(cmds, envp, data);
+	handle_middle(cmds, envp, data, 0);
 }
 
 void	middle_child(char **argv, char **envp, t_list *data, int i)
 {
 	char	**commands;
 
+	data->target = i + 2;
 	close_middle_fds(data->fd, data->nb_pipes, i);
 	setup_fd_mid(data->fd, i, data);
-	commands = get_commands(argv[i + 2]);
+	commands = get_commands(argv[data->target]);
 	execute_middle(commands, envp, argv, data);
 }

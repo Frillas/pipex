@@ -1,7 +1,7 @@
 NAME = pipex
 
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
 OBJ_DIR = ./obj

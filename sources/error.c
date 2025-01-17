@@ -6,7 +6,7 @@
 /*   By: aroullea <aroullea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 18:11:38 by aroullea          #+#    #+#             */
-/*   Updated: 2025/01/16 08:39:05 by aroullea         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:26:15 by aroullea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,10 @@ t_bool	is_empty(int argc, char **argv)
 		only_space = TRUE;
 	}
 	return (FALSE);
+}
+
+void	write_command(char *cmds)
+{
+	write(2, cmds, ft_strlen(cmds) + 1);
+	write(2, ": ", 2);
 }
